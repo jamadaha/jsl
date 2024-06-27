@@ -35,5 +35,11 @@ int main(void) {
     ASSERT_EQ("equals", vec[1], 0);
     ASSERT_EQ("equals", vec[2], 1);
     ASSERT_EQ("equals", vec[3], 2);
+    ASSERT_EQ("front", vec_front(vec), 3);
+    ASSERT_EQ("back", vec_back(vec), 2);
+    vec_pop(vec);
+    ASSERT_EQ("back", vec_back(vec), 1);
+    vec_shrink(vec);
+    ASSERT_EQ("shrink correctly resizes", vec_capacity(vec), 3);
     vec_free(vec);
 }

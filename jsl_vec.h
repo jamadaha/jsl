@@ -14,8 +14,11 @@ struct jsl_vec {
 #define vec_ptr(v) ((struct jsl_vec *)((char *)(v) - offsetof(struct jsl_vec, buffer)))
 #define vec_size(v) (vec_ptr(v)->size)
 #define vec_capacity(v) (vec_ptr(v)->capacity)
+#define vec_front(v) (v[0])
+#define vec_back(v) (v[vec_size(v) - 1])
 #define vec_push(v, e) (jsl_vec_may_grow(v), (v)[vec_ptr(v)->size++] = e)
 #define vec_pop(v) (vec_ptr(v)->size--, v[vec_ptr(v)->size])
+#define vec_shrink(v) ((v) = vec_realloc(v, vec_size(v)))
 
 #define jsl_vec_may_grow(v)                                                                        \
     (vec_size(v) >= vec_capacity(v) ? (v) = vec_realloc(v, vec_capacity(v) * vec_capacity(v)) : 0)
