@@ -63,3 +63,18 @@ static inline void vec_free(void *ptr) {
     struct jsl_vec *p = vec_ptr(ptr);
     free(p);
 }
+
+static inline void vec_shuffle(void *ptr) {
+    struct jsl_vec *p = vec_ptr(ptr);
+    if (p->size < 2) return;
+    void *tmp = malloc(p->element_size);
+    for (size_t i = 0; i < p->size - 2; i++) {
+        size_t j = rand() % (p->size - i) + i;
+        void  *a = ptr + i * p->element_size;
+        void  *b = ptr + j * p->element_size;
+        memcpy(tmp, a, p->element_size);
+        memcpy(a, b, p->element_size);
+        memcpy(b, tmp, p->element_size);
+    }
+    free(tmp);
+}
