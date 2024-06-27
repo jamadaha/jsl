@@ -41,5 +41,8 @@ int main(void) {
     ASSERT_EQ("back", vec_back(vec), 1);
     vec_shrink(vec);
     ASSERT_EQ("shrink correctly resizes", vec_capacity(vec), 3);
+    vec_clear(vec);
+    ASSERT_EQ("clear leaves capacity unchanged", vec_capacity(vec), 3);
+    ASSERT_EQ("clear sets size to zero", vec_size(vec), 0);
     vec_free(vec);
 }
