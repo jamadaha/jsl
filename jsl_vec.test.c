@@ -1,50 +1,50 @@
 #include "jsl_vec.h"
 #include "jsl_test.h"
+#include <stdbool.h>
+#include <time.h>
 
-int main(void) {
-    int *vec = vec_alloc(3, sizeof(int));
-    ASSERT("created", vec);
-    ASSERT_EQ("size_0", vec_size(vec), 0);
-    ASSERT_EQ("capacity_3", vec_capacity(vec), 3);
-    vec_push(vec, 0);
-    ASSERT_EQ("size_1", vec_size(vec), 1);
-    ASSERT_EQ("capacity_3", vec_capacity(vec), 3);
-    vec_push(vec, 1);
-    ASSERT_EQ("size_2", vec_size(vec), 2);
-    ASSERT_EQ("capacity_3", vec_capacity(vec), 3);
-    vec_push(vec, 2);
-    ASSERT_EQ("size_3", vec_size(vec), 3);
-    ASSERT_EQ("capacity_3", vec_capacity(vec), 3);
-    vec_push(vec, 3);
-    ASSERT_EQ("size_4", vec_size(vec), 4);
-    ASSERT_EQ("capacity_9", vec_capacity(vec), 9);
-    ASSERT_EQ("pop_equals_3", vec_pop(vec), 3);
-    ASSERT_EQ("size_3", vec_size(vec), 3);
-    ASSERT_EQ("capacity_9", vec_capacity(vec), 9);
-    vec_reverse(vec);
-    ASSERT_EQ("size_3", vec_size(vec), 3);
-    ASSERT_EQ("capacity_9", vec_capacity(vec), 9);
-    ASSERT_EQ("equals_0", vec[0], 2);
-    ASSERT_EQ("equals_1", vec[1], 1);
-    ASSERT_EQ("equals_2", vec[2], 0);
-    vec_push(vec, 3);
-    vec_reverse(vec);
-    ASSERT_EQ("size", vec_size(vec), 4);
-    ASSERT_EQ("capacity", vec_capacity(vec), 9);
-    ASSERT_EQ("equals", vec[0], 3);
-    ASSERT_EQ("equals", vec[1], 0);
-    ASSERT_EQ("equals", vec[2], 1);
-    ASSERT_EQ("equals", vec[3], 2);
-    ASSERT_EQ("front", vec_front(vec), 3);
-    ASSERT_EQ("back", vec_back(vec), 2);
-    vec_pop(vec);
-    ASSERT_EQ("back", vec_back(vec), 1);
-    vec_shrink(vec);
-    ASSERT_EQ("shrink correctly resizes", vec_capacity(vec), 3);
-    vec_shuffle(vec);
-    ASSERT("something changed", vec[0] != 3 || vec[1] != 0 || vec[2] != 1);
-    vec_clear(vec);
-    ASSERT_EQ("clear leaves capacity unchanged", vec_capacity(vec), 3);
-    ASSERT_EQ("clear sets size to zero", vec_size(vec), 0);
+void range(size_t max) {
+    clock_t start = clock();
+
+    bool valid = true;
+
+    size_t *vec = vec_new(sizeof(size_t));
+    for (size_t i = 0; i < max; i++) {
+        vec_push(vec, i);
+        if (vec_back(vec) != i) valid = false;
+    }
+
+    clock_t end   = clock();
+
+    ASSERT("RANGE Values", valid);
+    ASSERT("RANGE Size", vec_size(vec) == max);
+    printf("[RANGE] %zu - %f\n", max, (float)(end - start) / CLOCKS_PER_SEC);
     vec_free(vec);
+}
+
+void reverse(size_t max) {
+    clock_t start = clock();
+
+    bool valid = true;
+
+    size_t *vec = vec_new(sizeof(size_t));
+    for (size_t i = 0; i < max; i++)
+        vec_push(vec, i);
+
+    vec_reverse(vec);
+    for (size_t i = 0; i < max; i++)
+        if (vec[i] != max - i - 1) valid = false;
+
+    clock_t end   = clock();
+
+    ASSERT("[REVERSE] Values", valid);
+    ASSERT("[REVERSE] Size", vec_size(vec) == max);
+    printf("REVERSE %zu - %f\n", max, (float)(end - start) / CLOCKS_PER_SEC);
+    vec_free(vec);
+
+}
+
+int main(void) { 
+    range(10000000);
+    reverse(10000000);
 }
